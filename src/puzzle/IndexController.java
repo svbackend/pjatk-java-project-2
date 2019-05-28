@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-
 public class IndexController extends StackPane implements IController {
     private HashMap<String, Node> screens = new HashMap<>();
 
@@ -27,14 +26,12 @@ public class IndexController extends StackPane implements IController {
         return screens.get(name);
     }
 
-    //Loads the fxml file, add the screen to the screens collection and
-    //finally injects the screenPane to the controller.
-    public boolean loadScreen(String name, String resource) {
+    public boolean loadScreen(String name) {
         try {
-            FXMLLoader myLoader = new FXMLLoader(getClass().getResource(resource));
+            FXMLLoader myLoader = new FXMLLoader(getClass().getResource(name));
             Parent loadScreen = myLoader.load();
-            IController myScreenControler = myLoader.getController();
-            myScreenControler.setScreenParent(this);
+            IController myScreenController = myLoader.getController();
+            myScreenController.setScreenParent(this);
             addScreen(name, loadScreen);
             return true;
         } catch (Exception e) {
@@ -43,10 +40,6 @@ public class IndexController extends StackPane implements IController {
         }
     }
 
-    //This method tries to displayed the screen with a predefined name.
-    //First it makes sure the screen has been already loaded.  Then if there is more than
-    //one screen the new screen is been added second, and then the current screen is removed.
-    // If there isn't any screen being displayed, the new screen is just added to the root.
     public boolean setScreen(final String name) {
         if (screens.get(name) != null) {   //screen loaded
             final DoubleProperty opacity = opacityProperty();
@@ -77,7 +70,7 @@ public class IndexController extends StackPane implements IController {
             }
             return true;
         } else {
-            System.out.println("screen hasn't been loaded!!! \n");
+            System.out.println("screen " + name + " hasn't been loaded! \n");
             return false;
         }
     }
