@@ -6,9 +6,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
-public class Screen2Controller implements Initializable , IController {
+public class NewGameController implements Initializable , IController {
 
-    ScreenChangerService myController;
+    private ScreenChangerService screenChangerService;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -16,16 +16,16 @@ public class Screen2Controller implements Initializable , IController {
     }
     
     public void setScreenParent(ScreenChangerService screenParent){
-        myController = screenParent;
+        screenChangerService = screenParent;
     }
 
     @FXML
     private void goToScreen1(ActionEvent event){
-       myController.setScreen("index.fxml");
+       screenChangerService.setScreen("index.fxml");
     }
     
     @FXML
     private void goToScreen3(ActionEvent event){
-       myController.setScreen("scoreboard.fxml");
+       screenChangerService.setScreen("scoreboard.fxml");
     }
 }
