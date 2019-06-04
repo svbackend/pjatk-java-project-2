@@ -1,13 +1,13 @@
 package puzzle;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
-public class Screen2Controller implements Initializable , IController {
+import java.net.URL;
+import java.util.ResourceBundle;
 
+public class GameController implements Initializable, IController {
     ScreenChangerService myController;
 
     @Override
@@ -21,11 +21,11 @@ public class Screen2Controller implements Initializable , IController {
 
     @FXML
     private void goToScreen1(ActionEvent event){
-       myController.setScreen("index.fxml");
+       myController.setScreen("newGame.fxml");
     }
     
     @FXML
-    private void goToScreen3(ActionEvent event){
+    private void goToScreen2(ActionEvent event){
        myController.setScreen("scoreboard.fxml");
     }
 }
