@@ -33,7 +33,7 @@ public class ScreenChangerService extends StackPane {
             FXMLLoader myLoader = new FXMLLoader(getClass().getResource(fxmlFilename));
             Parent loadScreen = (Parent) myLoader.load();
             IController myScreenController = ((IController) myLoader.getController());
-            myScreenController.setScreenParent(this);
+            myScreenController.setScreenChanger(this);
             addScreen(fxmlFilename, loadScreen);
             return true;
         } catch (Exception e) {

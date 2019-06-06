@@ -1,5 +1,5 @@
 package puzzle;
 
 public interface IController {
-    public void setScreenParent(ScreenChangerService screenPage);
+    void setScreenChanger(ScreenChangerService screenPage);
 }

@@ -15,7 +15,7 @@ public class GameController implements Initializable, IController {
         // TODO
     }
     
-    public void setScreenParent(ScreenChangerService screenParent){
+    public void setScreenChanger(ScreenChangerService screenParent){
         myController = screenParent;
     }
 

@@ -14,7 +14,7 @@ public class IndexController implements Initializable, IController {
         // TODO
     }
     
-    public void setScreenParent(ScreenChangerService screenParent){
+    public void setScreenChanger(ScreenChangerService screenParent){
         screenChangerService = screenParent;
     }
 
