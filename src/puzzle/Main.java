@@ -10,16 +10,16 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        ScreenChangerService mainContainer = new ScreenChangerService();
-        mainContainer.loadScreen("newGame.fxml");
-        mainContainer.loadScreen("scoreboard.fxml");
-        mainContainer.loadScreen("game.fxml");
-        mainContainer.loadScreen("index.fxml");
+        ScreenChangerService screenChanger = new ScreenChangerService();
+        screenChanger.loadScreen("newGame.fxml");
+        screenChanger.loadScreen("scoreboard.fxml");
+        screenChanger.loadScreen("game.fxml");
+        screenChanger.loadScreen("index.fxml");
 
-        mainContainer.setScreen("index.fxml");
+        screenChanger.setScreen("index.fxml");
         
         Group root = new Group();
-        root.getChildren().addAll(mainContainer);
+        root.getChildren().addAll(screenChanger);
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setWidth(1024);
