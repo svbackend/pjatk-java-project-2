@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
@@ -30,6 +31,9 @@ public class NewGameController implements Initializable , IController {
     @FXML
     Button selectImgBtn;
 
+    @FXML
+    TextField username;
+
     private Image userImage;
 
     @Override
@@ -41,13 +45,9 @@ public class NewGameController implements Initializable , IController {
         this.screenChangerService = screenParent;
     }
 
-    public Image getUserImage() {
-        return this.userImage;
-    }
-
     @FXML
     private void startGame(ActionEvent event) {
-        this.screenChangerService.setScreen("game.fxml");
+        this.screenChangerService.setScreen("game.fxml", new GameParameterBag(userImage, username.getText()));
     }
 
     @FXML
@@ -75,5 +75,9 @@ public class NewGameController implements Initializable , IController {
         );
 
         displayImageAnimation.play();
+    }
+
+    public void setParameterBag(IParameterBag parameterBag) {
+        // todo move to base abstract controller class in order to avoid copypaste such empty methods in each controller
     }
 }
