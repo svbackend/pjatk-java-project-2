@@ -1,25 +1,23 @@
 package puzzle;
 
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.stream.IntStream;
 
 public class GameController implements IController {
     private ScreenChangerService screenChanger;
 
     @FXML
     Label usernameLabel;
-
-    @FXML
-    ImageView imageView;
 
     @FXML
     GridPane tiles;
@@ -31,6 +29,8 @@ public class GameController implements IController {
     private int cols;
     private int rows;
 
+    private HashMap<String, ImageView> puzzles = new HashMap<>();
+
     public void setScreenChanger(ScreenChangerService screenChanger) {
         this.screenChanger = screenChanger;
     }
@@ -41,7 +41,6 @@ public class GameController implements IController {
         this.difficulty = ((GameParameterBag) parameterBag).getDifficulty();
 
         usernameLabel.setText(this.username + " (Difficulty: " + difficulty + ")");
-        imageView.setImage(SwingFXUtils.toFXImage(this.userImage, null));
 
         calcFieldSize();
         createTiles();
@@ -49,6 +48,12 @@ public class GameController implements IController {
 
     private void calcFieldSize() {
         switch (difficulty) {
+            default:
+            case "Easy":
+                this.cols = 3;
+                this.rows = 2;
+                break;
+
             case "Medium":
                 this.cols = 4;
                 this.rows = 3;
@@ -58,59 +63,94 @@ public class GameController implements IController {
                 this.cols = 5;
                 this.rows = 4;
                 break;
-
-            default:
-                // Easy
-                this.cols = 3;
-                this.rows = 2;
-                break;
         }
-
-        tiles.setHgap(1);
-        tiles.setVgap(1);
     }
 
     private void createTiles() {
-            int imageWidth = this.userImage.getWidth();
-            int imageHeight = this.userImage.getHeight();
+        int imageWidth = this.userImage.getWidth();
+        int imageHeight = this.userImage.getHeight();
 
-            int tileWidth = imageWidth / this.cols;
-            int tileHeight = imageHeight / this.rows;
+        int tileWidth = imageWidth / this.cols;
+        int tileHeight = imageHeight / this.rows;
 
-            int x = 0;
-            int y = 0;
+        final int AVAILABLE_WIDTH_SPACE = 994;
+        final int AVAILABLE_HEIGHT_SPACE = 620;
+        final int TILE_FIT_WIDTH = AVAILABLE_WIDTH_SPACE / this.cols;
+        final int TILE_FIT_HEIGHT = AVAILABLE_HEIGHT_SPACE / this.rows;
+        boolean useFitWidth = true;
 
-            for (int i = 0; i < rows; i++) {
-                x = 0;
-                for (int j = 0; j < cols; j++) {
-                    try {
-                        BufferedImage tileImage = this.userImage.getSubimage(x, y, tileWidth, tileHeight);
-                        ImageView imageView = new ImageView();
-                        imageView.setImage(SwingFXUtils.toFXImage(tileImage, null));
-                        imageView.setFitWidth(200.0d);
-                        imageView.setPreserveRatio(true);
-                        tiles.add(imageView, j, i);
-                        //File outputFile = new File("/tmp/puzzle" + i + j + ".jpg");
-                        //ImageIO.write(SubImgage, "jpg", outputFile);
+        if (imageHeight >= imageWidth) {
+            useFitWidth = false;
+        }
 
-                        x += tileWidth;
+        int x = 0;
+        int y = 0;
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        for (int i = 0; i < rows; i++) {
+            x = 0;
+            for (int j = 0; j < cols; j++) {
+                try {
+                    BufferedImage tileImage = this.userImage.getSubimage(x, y, tileWidth, tileHeight);
+                    ImageView imageView = new ImageView();
+                    imageView.setId(i + "x" + j);
+
+                    if (useFitWidth) {
+                        imageView.setFitWidth(TILE_FIT_WIDTH);
+                    } else {
+                        imageView.setFitHeight(TILE_FIT_HEIGHT);
                     }
+
+                    imageView.setImage(SwingFXUtils.toFXImage(tileImage, null));
+                    imageView.setPreserveRatio(true);
+                    this.puzzles.put(imageView.getId(), imageView);
+
+                    x += tileWidth;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                y += tileHeight;
             }
+
+            y += tileHeight;
+        }
+
+        renderTiles();
+
+        boolean isWin = isPuzzleResolved();
+
+        System.out.println(isWin);
     }
 
-    @FXML
-    private void goToScreen1(ActionEvent event) {
-        screenChanger.setScreen("newGame.fxml");
+    private void renderTiles() {
+        // java, are you kidding me?
+        Integer[] rows = IntStream.rangeClosed(0, this.rows-1).boxed().toArray(Integer[]::new);
+        Integer[] cols = IntStream.rangeClosed(0, this.cols-1).boxed().toArray(Integer[]::new);
+
+        Collections.shuffle(Arrays.asList(rows));
+        Collections.shuffle(Arrays.asList(cols));
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                ImageView tmp = this.puzzles.get(i + "x" + j);
+                this.puzzles.put(i + "x" + j, this.puzzles.get(rows[i] + "x" + cols[j]));
+                this.puzzles.put(rows[i] + "x" + cols[j], tmp);
+                //this.tiles.add(this.puzzles.get(i + "x" + j), j, i);
+                //this.tiles.add(this.puzzles.get(rows[i] + "x" + cols[j]), cols[j], rows[i]);
+                //this.tiles.getChildren().set
+            }
+        }
+
     }
 
-    @FXML
-    private void goToScreen2(ActionEvent event) {
-        screenChanger.setScreen("scoreboard.fxml");
+    private boolean isPuzzleResolved() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                if (!this.puzzles.get(i + "x" + j).getId().equals(i + "x" + j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
