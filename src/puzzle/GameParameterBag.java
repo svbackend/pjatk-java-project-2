@@ -1,21 +1,27 @@
 package puzzle;
 
-import javafx.scene.image.Image;
+import java.awt.image.BufferedImage;
 
 class GameParameterBag implements IParameterBag {
-    private final Image image;
+    private final BufferedImage image;
     private final String username;
+    private final String difficulty;
 
-    GameParameterBag(Image image, String username) {
+    GameParameterBag(BufferedImage image, String username, String difficulty) {
         this.image = image;
         this.username = username;
+        this.difficulty = difficulty;
     }
 
-    Image getImage() {
+    BufferedImage getImage() {
         return image;
     }
 
     String getUsername() {
         return username;
+    }
+
+    String getDifficulty() {
+        return difficulty;
     }
 }

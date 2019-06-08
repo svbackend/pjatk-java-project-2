@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -34,7 +35,10 @@ public class NewGameController implements Initializable , IController {
     @FXML
     TextField username;
 
-    private Image userImage;
+    @FXML
+    ChoiceBox<String> difficulty;
+
+    private BufferedImage userImage;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -47,7 +51,7 @@ public class NewGameController implements Initializable , IController {
 
     @FXML
     private void startGame(ActionEvent event) {
-        this.screenChangerService.setScreen("game.fxml", new GameParameterBag(userImage, username.getText()));
+        this.screenChangerService.setScreen("game.fxml", new GameParameterBag(userImage, username.getText(), difficulty.getValue()));
     }
 
     @FXML
@@ -61,12 +65,12 @@ public class NewGameController implements Initializable , IController {
         File file = fileChooser.showOpenDialog(null);
 
         try {
-            BufferedImage bufferedImage = ImageIO.read(file);
-            this.userImage = SwingFXUtils.toFXImage(bufferedImage, null);
-            this.imageView.setImage(this.userImage);
+            this.userImage = ImageIO.read(file);
+            this.imageView.setImage(SwingFXUtils.toFXImage(this.userImage, null));
             this.selectImgBtn.setText("Change image");
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
         Timeline displayImageAnimation = new Timeline(
