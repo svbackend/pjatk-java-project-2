@@ -32,4 +32,9 @@ public class Screen3Controller implements Initializable, IController {
     private void goToScreen2(ActionEvent event) {
        myController.setScreen("newGame.fxml");
     }
+
+    @Override
+    public void setParameterBag(IParameterBag parameterBag) {
+
+    }
 }

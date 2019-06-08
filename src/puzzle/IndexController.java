@@ -27,4 +27,9 @@ public class IndexController implements Initializable, IController {
     private void showScoreboard(ActionEvent event){
        screenChangerService.setScreen("scoreboard.fxml");
     }
+
+    @Override
+    public void setParameterBag(IParameterBag parameterBag) {
+
+    }
 }
