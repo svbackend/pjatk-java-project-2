@@ -1,6 +1,8 @@
 package puzzle;
 
+import java.io.IOException;
 import java.util.HashMap;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -15,14 +17,13 @@ import javafx.util.Duration;
 
 public class ScreenChangerService extends StackPane {
     private HashMap<String, Node> screens = new HashMap<>();
-    
+    private HashMap<String, IController> controllers = new HashMap<>();
+
+
     public ScreenChangerService() {
         super();
     }
 
-    public void addScreen(String name, Node screen) {
-        screens.put(name, screen);
-    }
 
     public Node getScreen(String name) {
         return screens.get(name);
@@ -31,16 +32,23 @@ public class ScreenChangerService extends StackPane {
     public boolean loadScreen(String fxmlFilename) {
         try {
             FXMLLoader myLoader = new FXMLLoader(getClass().getResource(fxmlFilename));
-            Parent loadScreen = (Parent) myLoader.load();
-            IController myScreenController = ((IController) myLoader.getController());
-            myScreenController.setScreenChanger(this);
-            addScreen(fxmlFilename, loadScreen);
+            Parent loadScreen = myLoader.load();
+            IController controller = myLoader.getController();
+            controller.setScreenChanger(this);
+            screens.put(fxmlFilename, loadScreen);
+            controllers.put(fxmlFilename, controller);
             return true;
         } catch (Exception e) {
             System.out.println("Screen not loaded: " + fxmlFilename);
             System.out.println(e.getMessage());
             return false;
         }
+    }
+
+    void setScreen(final String fxmlFilename, IParameterBag parameterBag) {
+        IController controller = controllers.get(fxmlFilename);
+        controller.setParameterBag(parameterBag);
+        setScreen(fxmlFilename);
     }
 
     public boolean setScreen(final String fxmlFilename) {
@@ -51,16 +59,16 @@ public class ScreenChangerService extends StackPane {
                 Timeline fade = new Timeline(
                         new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1.0)),
                         new KeyFrame(new Duration(400), new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent t) {
-                        getChildren().remove(0);
-                        getChildren().add(0, screens.get(fxmlFilename));
-                        Timeline fadeIn = new Timeline(
-                                new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                                new KeyFrame(new Duration(400), new KeyValue(opacity, 1.0)));
-                        fadeIn.play();
-                    }
-                }, new KeyValue(opacity, 0.0)));
+                            @Override
+                            public void handle(ActionEvent t) {
+                                getChildren().remove(0);
+                                getChildren().add(0, screens.get(fxmlFilename));
+                                Timeline fadeIn = new Timeline(
+                                        new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
+                                        new KeyFrame(new Duration(400), new KeyValue(opacity, 1.0)));
+                                fadeIn.play();
+                            }
+                        }, new KeyValue(opacity, 0.0)));
                 fade.play();
 
             } else {

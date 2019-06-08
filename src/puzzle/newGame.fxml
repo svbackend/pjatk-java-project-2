@@ -24,7 +24,7 @@
                 </Label>
                 <Button fx:id="selectImgBtn" mnemonicParsing="false" onAction="#selectImage" text="Select image"/>
                 <ImageView fx:id="imageView" fitWidth="300.0" pickOnBounds="true" preserveRatio="true"/>
-                <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                <TextField fx:id="username" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                            prefHeight="30.0" prefWidth="300.0" promptText="Your username">
                     <VBox.margin>
                         <Insets/>
