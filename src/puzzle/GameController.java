@@ -6,11 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class GameController implements IController {
     private ScreenChangerService screenChanger;
@@ -20,6 +20,9 @@ public class GameController implements IController {
 
     @FXML
     ImageView imageView;
+
+    @FXML
+    GridPane tiles;
 
     private BufferedImage userImage;
     private String username;
@@ -62,13 +65,15 @@ public class GameController implements IController {
                 this.rows = 2;
                 break;
         }
+
+        tiles.setHgap(1);
+        tiles.setVgap(1);
     }
 
     private void createTiles() {
             int imageWidth = this.userImage.getWidth();
             int imageHeight = this.userImage.getHeight();
 
-            //width and height of each piece
             int tileWidth = imageWidth / this.cols;
             int tileHeight = imageHeight / this.rows;
 
@@ -79,9 +84,14 @@ public class GameController implements IController {
                 x = 0;
                 for (int j = 0; j < cols; j++) {
                     try {
-                        BufferedImage SubImgage = this.userImage.getSubimage(x, y, tileWidth, tileHeight);
-                        File outputFile = new File("/tmp/puzzle" + i + j + ".jpg");
-                        ImageIO.write(SubImgage, "jpg", outputFile);
+                        BufferedImage tileImage = this.userImage.getSubimage(x, y, tileWidth, tileHeight);
+                        ImageView imageView = new ImageView();
+                        imageView.setImage(SwingFXUtils.toFXImage(tileImage, null));
+                        imageView.setFitWidth(200.0d);
+                        imageView.setPreserveRatio(true);
+                        tiles.add(imageView, j, i);
+                        //File outputFile = new File("/tmp/puzzle" + i + j + ".jpg");
+                        //ImageIO.write(SubImgage, "jpg", outputFile);
 
                         x += tileWidth;
 
