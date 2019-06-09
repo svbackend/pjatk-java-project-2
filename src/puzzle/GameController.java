@@ -8,9 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class GameController implements IController {
@@ -114,32 +112,36 @@ public class GameController implements IController {
             y += tileHeight;
         }
 
+        while (isPuzzleResolved()) {
+            shuffleTiles();
+        }
+
         renderTiles();
-
-        boolean isWin = isPuzzleResolved();
-
-        System.out.println(isWin);
     }
 
     private void renderTiles() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                this.tiles.add(this.puzzles.get(i + "x" + j), j, i);
+            }
+        }
+    }
+
+    private void shuffleTiles() {
         // java, are you kidding me?
-        Integer[] rows = IntStream.rangeClosed(0, this.rows-1).boxed().toArray(Integer[]::new);
-        Integer[] cols = IntStream.rangeClosed(0, this.cols-1).boxed().toArray(Integer[]::new);
+        Integer[] rows = IntStream.range(0, this.rows).boxed().toArray(Integer[]::new);
+        Integer[] cols = IntStream.range(0, this.cols).boxed().toArray(Integer[]::new);
 
         Collections.shuffle(Arrays.asList(rows));
         Collections.shuffle(Arrays.asList(cols));
 
-        for (int i = 0; i < this.rows; i++) {
+        for (int i = 0; i < this.rows/2; i++) {
             for (int j = 0; j < this.cols; j++) {
                 ImageView tmp = this.puzzles.get(i + "x" + j);
                 this.puzzles.put(i + "x" + j, this.puzzles.get(rows[i] + "x" + cols[j]));
                 this.puzzles.put(rows[i] + "x" + cols[j], tmp);
-                //this.tiles.add(this.puzzles.get(i + "x" + j), j, i);
-                //this.tiles.add(this.puzzles.get(rows[i] + "x" + cols[j]), cols[j], rows[i]);
-                //this.tiles.getChildren().set
             }
         }
-
     }
 
     private boolean isPuzzleResolved() {
