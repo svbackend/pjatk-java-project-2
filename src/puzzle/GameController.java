@@ -2,14 +2,12 @@ package puzzle;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.Timer;
@@ -76,17 +74,17 @@ public class GameController implements IController, IListener, IStopable {
         switch (difficulty) {
             default:
             case "Easy":
-                this.cols = 3;
+                this.cols = 2;
                 this.rows = 2;
                 break;
 
             case "Medium":
-                this.cols = 4;
+                this.cols = 3;
                 this.rows = 3;
                 break;
 
             case "Hard":
-                this.cols = 5;
+                this.cols = 4;
                 this.rows = 4;
                 break;
         }
@@ -145,7 +143,9 @@ public class GameController implements IController, IListener, IStopable {
 
         getCurrent().setOpacity(0.6);
 
-        while (isPuzzleResolved()) {
+        shuffleTiles();
+
+        while (!isSolvable() || isPuzzleResolved()) {
             shuffleTiles();
         }
 
@@ -167,15 +167,69 @@ public class GameController implements IController, IListener, IStopable {
             for (int j = 0; j < this.cols; j++) {
                 int newRow = rand.nextInt(this.rows);
                 int newCol = rand.nextInt(this.cols);
+
                 ImageView tmp = this.puzzles.get(idx(i, j));
                 this.puzzles.put(idx(i, j), this.puzzles.get(idx(newRow, newCol)));
                 this.puzzles.put(idx(newRow, newCol), tmp);
 
-                if (i == this.currentRow && j == this.currentCol) {
+                if (this.currentRow == newRow && this.currentCol == newCol) {
+                    this.currentRow = i;
+                    this.currentCol = j;
+                } else if (i == this.currentRow && j == this.currentCol) {
                     this.currentRow = newRow;
                     this.currentCol = newCol;
                 }
             }
+        }
+    }
+
+    private int getTileNumber(String id) {
+        String[] rowAndCol = id.split("x");
+        int row = Integer.parseInt(rowAndCol[0]) + 1;
+        int col = Integer.parseInt(rowAndCol[1]) + 1;
+
+        return (row * this.cols) - this.cols + col;
+    }
+
+    private int getInversionsCount(int[][] arr) {
+        int invCount = 0;
+
+        for (int i = 0; i < cols - 1; i++) {
+            for (int j = i + 1; j < rows; j++) {
+                if (arr[j][i] > 0 && arr[j][i] > arr[i][j]) {
+                    invCount++;
+                }
+            }
+        }
+
+        return invCount;
+    }
+
+    /**
+     * If the grid width is odd, then the number of inversions in a solvable situation is even.
+     * If the grid width is even, and the blank is on an even row counting from the bottom (second-last, fourth-last etc), then the number of inversions in a solvable situation is odd.
+     * If the grid width is even, and the blank is on an odd row counting from the bottom (last, third-last, fifth-last etc) then the number of inversions in a solvable situation is even.
+     * @link https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+     */
+    private boolean isSolvable() {
+        int[][] puzzle = new int[rows][cols];
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                puzzle[i][j] = getTileNumber(puzzles.get(idx(i, j)).getId());
+
+                if (currentRow == i && currentCol == j) {
+                    puzzle[i][j] = 0;
+                }
+            }
+        }
+
+        int invCount = getInversionsCount(puzzle);
+
+        if (cols % 2 == 0) {
+            return (invCount % 2 != 0);
+        } else {
+            return (invCount % 2 == 0);
         }
     }
 
@@ -204,15 +258,15 @@ public class GameController implements IController, IListener, IStopable {
             return;
         }
 
-        swapCurrentTile(currentRow-1, currentCol);
+        swapCurrentTile(currentRow - 1, currentCol);
     }
 
     private void moveCurrentTileDown() {
-        if (this.currentRow == this.rows-1) {
+        if (this.currentRow == this.rows - 1) {
             return;
         }
 
-        swapCurrentTile(currentRow+1, currentCol);
+        swapCurrentTile(currentRow + 1, currentCol);
     }
 
     private void moveCurrentTileLeft() {
@@ -220,15 +274,15 @@ public class GameController implements IController, IListener, IStopable {
             return;
         }
 
-        swapCurrentTile(currentRow, currentCol-1);
+        swapCurrentTile(currentRow, currentCol - 1);
     }
 
     private void moveCurrentTileRight() {
-        if (this.currentCol == this.cols-1) {
+        if (this.currentCol == this.cols - 1) {
             return;
         }
 
-        swapCurrentTile(currentRow, currentCol+1);
+        swapCurrentTile(currentRow, currentCol + 1);
     }
 
     private void swapCurrentTile(int newRow, int newCol) {
