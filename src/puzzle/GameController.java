@@ -1,21 +1,26 @@
 package puzzle;
 
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.stream.IntStream;
+import java.util.Timer;
 
-public class GameController implements IController {
+public class GameController implements IController, IListener, IStopable {
     private ScreenChangerService screenChanger;
 
     @FXML
     Label usernameLabel;
+    @FXML
+    Label timeLabel;
 
     @FXML
     GridPane tiles;
@@ -26,6 +31,13 @@ public class GameController implements IController {
 
     private int cols;
     private int rows;
+
+    // Position of user's tile
+    private int currentRow;
+    private int currentCol;
+
+    private Timer timer;
+    private SpentTime spentTime;
 
     private HashMap<String, ImageView> puzzles = new HashMap<>();
 
@@ -42,6 +54,22 @@ public class GameController implements IController {
 
         calcFieldSize();
         createTiles();
+        initTimer();
+    }
+
+    private void initTimer() {
+        this.spentTime = new SpentTime();
+
+        this.timer = new Timer("Timer");
+        this.timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                Platform.runLater(() -> {
+                    System.out.println("hello");
+                    timeLabel.setText(spentTime.toString());
+                });
+            }
+        }, 1000, 1000);
+
     }
 
     private void calcFieldSize() {
@@ -90,7 +118,7 @@ public class GameController implements IController {
                 try {
                     BufferedImage tileImage = this.userImage.getSubimage(x, y, tileWidth, tileHeight);
                     ImageView imageView = new ImageView();
-                    imageView.setId(i + "x" + j);
+                    imageView.setId(idx(i, j));
 
                     if (useFitWidth) {
                         imageView.setFitWidth(TILE_FIT_WIDTH);
@@ -112,6 +140,11 @@ public class GameController implements IController {
             y += tileHeight;
         }
 
+        this.currentRow = this.rows - 1;
+        this.currentCol = this.cols - 1;
+
+        getCurrent().setOpacity(0.6);
+
         while (isPuzzleResolved()) {
             shuffleTiles();
         }
@@ -122,24 +155,26 @@ public class GameController implements IController {
     private void renderTiles() {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                this.tiles.add(this.puzzles.get(i + "x" + j), j, i);
+                this.tiles.add(this.puzzles.get(idx(i, j)), j, i);
             }
         }
     }
 
     private void shuffleTiles() {
-        // java, are you kidding me?
-        Integer[] rows = IntStream.range(0, this.rows).boxed().toArray(Integer[]::new);
-        Integer[] cols = IntStream.range(0, this.cols).boxed().toArray(Integer[]::new);
+        Random rand = new Random();
 
-        Collections.shuffle(Arrays.asList(rows));
-        Collections.shuffle(Arrays.asList(cols));
-
-        for (int i = 0; i < this.rows/2; i++) {
+        for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                ImageView tmp = this.puzzles.get(i + "x" + j);
-                this.puzzles.put(i + "x" + j, this.puzzles.get(rows[i] + "x" + cols[j]));
-                this.puzzles.put(rows[i] + "x" + cols[j], tmp);
+                int newRow = rand.nextInt(this.rows);
+                int newCol = rand.nextInt(this.cols);
+                ImageView tmp = this.puzzles.get(idx(i, j));
+                this.puzzles.put(idx(i, j), this.puzzles.get(idx(newRow, newCol)));
+                this.puzzles.put(idx(newRow, newCol), tmp);
+
+                if (i == this.currentRow && j == this.currentCol) {
+                    this.currentRow = newRow;
+                    this.currentCol = newCol;
+                }
             }
         }
     }
@@ -154,5 +189,95 @@ public class GameController implements IController {
         }
 
         return true;
+    }
+
+    private String idx(int row, int col) {
+        return row + "x" + col;
+    }
+
+    private ImageView getCurrent() {
+        return this.puzzles.get(idx(this.currentRow, this.currentCol));
+    }
+
+    private void moveCurrentTileUp() {
+        if (this.currentRow == 0) {
+            return;
+        }
+
+        swapCurrentTile(currentRow-1, currentCol);
+    }
+
+    private void moveCurrentTileDown() {
+        if (this.currentRow == this.rows-1) {
+            return;
+        }
+
+        swapCurrentTile(currentRow+1, currentCol);
+    }
+
+    private void moveCurrentTileLeft() {
+        if (this.currentCol == 0) {
+            return;
+        }
+
+        swapCurrentTile(currentRow, currentCol-1);
+    }
+
+    private void moveCurrentTileRight() {
+        if (this.currentCol == this.cols-1) {
+            return;
+        }
+
+        swapCurrentTile(currentRow, currentCol+1);
+    }
+
+    private void swapCurrentTile(int newRow, int newCol) {
+        String currentPosition = idx(currentRow, currentCol);
+        String newPosition = idx(newRow, newCol);
+
+        ImageView currentView = this.getCurrent();
+        ImageView newView = this.puzzles.get(newPosition);
+
+        this.puzzles.replace(currentPosition, newView);
+        this.puzzles.replace(newPosition, currentView);
+
+        this.tiles.getChildren().removeAll(currentView, newView);
+
+        this.tiles.add(newView, currentCol, currentRow);
+        this.tiles.add(currentView, newCol, newRow);
+
+        this.currentCol = newCol;
+        this.currentRow = newRow;
+    }
+
+    public void onKeyEvent(KeyEvent event) {
+        if (event.getEventType() != KeyEvent.KEY_PRESSED) {
+            return;
+        }
+
+        switch (event.getCode()) {
+            case UP:
+                moveCurrentTileUp();
+                break;
+            case DOWN:
+                moveCurrentTileDown();
+                break;
+            case LEFT:
+                moveCurrentTileLeft();
+                break;
+            case RIGHT:
+                moveCurrentTileRight();
+                break;
+        }
+
+        if (isPuzzleResolved()) {
+            System.out.println("You won!");
+        }
+    }
+
+    @Override
+    public void stop() {
+        spentTime.stop();
+        timer.cancel();
     }
 }

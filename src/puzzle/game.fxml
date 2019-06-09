@@ -16,6 +16,7 @@
             <Font size="18.0" />
           </font>
         </Label>
+        <Label fx:id="timeLabel">...</Label>
             <GridPane fx:id="tiles" alignment="CENTER" hgap="1" prefHeight="600" prefWidth="800" vgap="1">
                 <padding>
                     <Insets left="15.0" right="15.0" />

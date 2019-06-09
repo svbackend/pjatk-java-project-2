@@ -1,6 +1,5 @@
 package puzzle;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import javafx.animation.KeyFrame;
@@ -12,18 +11,22 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class ScreenChangerService extends StackPane {
     private HashMap<String, Node> screens = new HashMap<>();
     private HashMap<String, IController> controllers = new HashMap<>();
+    private String currentScreen;
 
+    private EventHandler<KeyEvent> keyListener = (event) -> {
+        IController controller = controllers.get(currentScreen);
 
-    public ScreenChangerService() {
-        super();
-    }
-
+        if (controller instanceof IListener) {
+            ((IListener) controller).onKeyEvent(event);
+        }
+    };
 
     public Node getScreen(String name) {
         return screens.get(name);
@@ -80,6 +83,9 @@ public class ScreenChangerService extends StackPane {
                 );
                 fadeIn.play();
             }
+
+            this.currentScreen = fxmlFilename;
+
             return true;
         } else {
             System.out.println(fxmlFilename + "screen hasn't been loaded!!! \n");
@@ -109,6 +115,18 @@ public class ScreenChangerService extends StackPane {
             return false;
         } else {
             return true;
+        }
+    }
+
+    EventHandler<KeyEvent> getKeyListener() {
+        return keyListener;
+    }
+
+    void stop() {
+        IController controller = controllers.get(currentScreen);
+
+        if (controller instanceof IListener) {
+            ((IStopable) controller).stop();
         }
     }
 }
