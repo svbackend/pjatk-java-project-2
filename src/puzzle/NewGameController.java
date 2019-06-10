@@ -17,14 +17,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
-import javafx.scene.image.Image;
+
 import javafx.util.Duration;
 
-public class NewGameController implements Initializable , IController {
+public class NewGameController implements Initializable , IController, IListener {
 
-    private ScreenChangerService screenChangerService;
+    private ScreenChangerService screenChanger;
 
     @FXML
     ImageView imageView;
@@ -46,12 +48,12 @@ public class NewGameController implements Initializable , IController {
     }
     
     public void setScreenChanger(ScreenChangerService screenParent){
-        this.screenChangerService = screenParent;
+        this.screenChanger = screenParent;
     }
 
     @FXML
     private void startGame(ActionEvent event) {
-        this.screenChangerService.setScreen("game.fxml", new GameParameterBag(userImage, username.getText(), difficulty.getValue()));
+        this.screenChanger.setScreen("game.fxml", new GameParameterBag(userImage, username.getText(), difficulty.getValue()));
     }
 
     @FXML
@@ -79,6 +81,18 @@ public class NewGameController implements Initializable , IController {
         );
 
         displayImageAnimation.play();
+    }
+
+    public void onKeyEvent(KeyEvent event) {
+        if (event.getEventType() != KeyEvent.KEY_PRESSED) {
+            return;
+        }
+
+        if (event.getCode() != KeyCode.BACK_SPACE) {
+            return;
+        }
+
+        screenChanger.setScreen("index.fxml");
     }
 
     public void setParameterBag(IParameterBag parameterBag) {

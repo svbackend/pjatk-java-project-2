@@ -2,10 +2,12 @@ package puzzle;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 import java.awt.image.BufferedImage;
@@ -19,7 +21,7 @@ public class GameController implements IController, IListener, IStopable {
     private final int EASY_COLS = 3;
     private final int MEDIUM_ROWS = 3;
     private final int MEDIUM_COLS = 3;
-    private final int HARD_ROWS = 4;
+    private final int HARD_ROWS = 3;
     private final int HARD_COLS = 4;
 
     @FXML
@@ -246,21 +248,13 @@ public class GameController implements IController, IListener, IStopable {
     /**
      * n = cols
      * m = rows
-     *
      * THEOREM 1.1a: If n is odd, then every legal configuration corresponds to a C[] permutation with an even number of inversions. (proved later)
-     *
      * THEOREM 1.1b: If n is even, then every legal configuration with the hole in row i where m - i is even corresponds to a C[] permutation with an even number of inversions. (proved later)
-     *
      * THEOREM 1.1c: If n is even, then every legal configuration with the hole in row i where m - i is odd corresponds to a C[] permutation with an odd number of inversions. (proved later)
-     *
-     * If the grid width is odd, then the number of inversions in a solvable situation is even.
-     * If the grid width is even, and the blank is on an even row counting from the bottom (second-last, fourth-last etc), then the number of inversions in a solvable situation is odd.
-     * If the grid width is even, and the blank is on an odd row counting from the bottom (last, third-last, fifth-last etc) then the number of inversions in a solvable situation is even.
      * @link https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
      * @link http://kevingong.com/Math/SixteenPuzzle.html
      */
     private boolean isSolvable() {
-        System.out.println("Is solvable..");
         int[][] puzzle = new int[rows][cols];
 
         for (int i = 0; i < this.rows; i++) {
@@ -377,6 +371,9 @@ public class GameController implements IController, IListener, IStopable {
             case RIGHT:
                 moveCurrentTileRight();
                 break;
+            case BACK_SPACE:
+                goBack();
+                break;
         }
 
         if (isPuzzleResolved()) {
@@ -394,5 +391,10 @@ public class GameController implements IController, IListener, IStopable {
     public void stop() {
         spentTime.stop();
         timer.cancel();
+    }
+
+    private void goBack() {
+        screenChanger.setScreen("newGame.fxml");
+        screenChanger.reloadScreen("game.fxml");
     }
 }
