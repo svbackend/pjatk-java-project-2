@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Border;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 
@@ -53,7 +54,31 @@ public class NewGameController implements Initializable , IController, IListener
 
     @FXML
     private void startGame(ActionEvent event) {
+        if (!validate()) {
+            return;
+        }
+
         this.screenChanger.setScreen("game.fxml", new GameParameterBag(userImage, username.getText(), difficulty.getValue()));
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+
+        if (username.getText().length() == 0) {
+            username.getStyleClass().addAll("invalid");
+            isValid = false;
+        } else {
+            username.getStyleClass().removeAll("invalid");
+        }
+
+        if (userImage == null) {
+            selectImgBtn.getStyleClass().addAll("invalid");
+            isValid = false;
+        } else {
+            selectImgBtn.getStyleClass().removeAll("invalid");
+        }
+
+        return isValid;
     }
 
     @FXML
