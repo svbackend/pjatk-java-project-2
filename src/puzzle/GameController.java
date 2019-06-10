@@ -62,7 +62,6 @@ public class GameController implements IController, IListener, IStopable {
         this.timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 Platform.runLater(() -> {
-                    System.out.println("hello");
                     timeLabel.setText(spentTime.toString());
                 });
             }
@@ -74,7 +73,7 @@ public class GameController implements IController, IListener, IStopable {
         switch (difficulty) {
             default:
             case "Easy":
-                this.cols = 2;
+                this.cols = 3;
                 this.rows = 2;
                 break;
 
@@ -194,15 +193,46 @@ public class GameController implements IController, IListener, IStopable {
     private int getInversionsCount(int[][] arr) {
         int invCount = 0;
 
-        for (int i = 0; i < cols - 1; i++) {
-            for (int j = i + 1; j < rows; j++) {
-                if (arr[j][i] > 0 && arr[j][i] > arr[i][j]) {
-                    invCount++;
+        int rowToStart, colToStart;
+
+        for (int row = 0; row < arr.length; row++) {
+            for (int col = 0; col < arr[row].length; col++) {
+                if (row == arr.length-1 && col == arr[row].length-1) {
+                    break;
                 }
+
+                rowToStart = row;
+                colToStart = col;
+
+                if (col+1 == arr[row].length) {
+                    colToStart = 0;
+                    rowToStart++;
+                }
+
+                invCount += countInversions(arr, rowToStart, colToStart, arr[row][col]);
             }
         }
 
         return invCount;
+    }
+
+    private int countInversions(int[][] arr, int startRow, int startCol, int number) {
+        int inversionsCount = 0;
+
+        if (number == 0) {
+            return 0;
+        }
+
+        for (int row = startRow; row < arr.length; row++) {
+            for (int col = startCol; col < arr[row].length; col++) {
+                if (arr[row][col] > 0 && number > arr[row][col]) {
+                    inversionsCount++;
+                }
+            }
+            startCol = 0; // after first iteration we need to start count from 0 col
+        }
+
+        return inversionsCount;
     }
 
     /**
@@ -210,6 +240,7 @@ public class GameController implements IController, IListener, IStopable {
      * If the grid width is even, and the blank is on an even row counting from the bottom (second-last, fourth-last etc), then the number of inversions in a solvable situation is odd.
      * If the grid width is even, and the blank is on an odd row counting from the bottom (last, third-last, fifth-last etc) then the number of inversions in a solvable situation is even.
      * @link https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+     * @link http://kevingong.com/Math/SixteenPuzzle.html
      */
     private boolean isSolvable() {
         int[][] puzzle = new int[rows][cols];
@@ -226,11 +257,17 @@ public class GameController implements IController, IListener, IStopable {
 
         int invCount = getInversionsCount(puzzle);
 
-        if (cols % 2 == 0) {
-            return (invCount % 2 != 0);
-        } else {
+        if (cols*rows % 2 != 0) {
             return (invCount % 2 == 0);
         }
+
+        int emptyTileRowFromBottom = rows - currentRow;
+
+        if (emptyTileRowFromBottom % 2 == 0) {
+            return (invCount % 2 != 0);
+        }
+
+        return (invCount % 2 == 0);
     }
 
     private boolean isPuzzleResolved() {
@@ -329,7 +366,6 @@ public class GameController implements IController, IListener, IStopable {
         }
     }
 
-    @Override
     public void stop() {
         spentTime.stop();
         timer.cancel();
