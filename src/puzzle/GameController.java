@@ -244,6 +244,15 @@ public class GameController implements IController, IListener, IStopable {
     }
 
     /**
+     * n = cols
+     * m = rows
+     *
+     * THEOREM 1.1a: If n is odd, then every legal configuration corresponds to a C[] permutation with an even number of inversions. (proved later)
+     *
+     * THEOREM 1.1b: If n is even, then every legal configuration with the hole in row i where m - i is even corresponds to a C[] permutation with an even number of inversions. (proved later)
+     *
+     * THEOREM 1.1c: If n is even, then every legal configuration with the hole in row i where m - i is odd corresponds to a C[] permutation with an odd number of inversions. (proved later)
+     *
      * If the grid width is odd, then the number of inversions in a solvable situation is even.
      * If the grid width is even, and the blank is on an even row counting from the bottom (second-last, fourth-last etc), then the number of inversions in a solvable situation is odd.
      * If the grid width is even, and the blank is on an odd row counting from the bottom (last, third-last, fifth-last etc) then the number of inversions in a solvable situation is even.
@@ -251,6 +260,7 @@ public class GameController implements IController, IListener, IStopable {
      * @link http://kevingong.com/Math/SixteenPuzzle.html
      */
     private boolean isSolvable() {
+        System.out.println("Is solvable..");
         int[][] puzzle = new int[rows][cols];
 
         for (int i = 0; i < this.rows; i++) {
@@ -265,17 +275,17 @@ public class GameController implements IController, IListener, IStopable {
 
         int invCount = getInversionsCount(puzzle);
 
-        if (cols*rows % 2 != 0) {
+        if (cols % 2 != 0) {
             return (invCount % 2 == 0);
         }
 
         int emptyTileRowFromBottom = rows - currentRow;
 
         if (emptyTileRowFromBottom % 2 == 0) {
-            return (invCount % 2 != 0);
+            return (invCount % 2 == 0);
         }
 
-        return (invCount % 2 == 0);
+        return (invCount % 2 != 0);
     }
 
     private boolean isPuzzleResolved() {
@@ -371,6 +381,13 @@ public class GameController implements IController, IListener, IStopable {
 
         if (isPuzzleResolved()) {
             System.out.println("You won!");
+
+            if (null == screenChanger.getScreen("won.fxml")) {
+                screenChanger.loadScreen("won.fxml");
+            }
+
+            screenChanger.setScreen("won.fxml", new ResultsParameterBag(spentTime, username, difficulty));
+            screenChanger.reloadScreen("game.fxml");
         }
     }
 

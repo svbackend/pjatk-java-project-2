@@ -109,13 +109,10 @@ public class ScreenChangerService extends StackPane {
          }*/
     }
 
-    public boolean unloadScreen(String name) {
-        if (screens.remove(name) == null) {
-            System.out.println("Screen didn't exist");
-            return false;
-        } else {
-            return true;
-        }
+    public boolean reloadScreen(String name) {
+        stop(name);
+        screens.remove(name);
+        return loadScreen(name);
     }
 
     EventHandler<KeyEvent> getKeyListener() {
@@ -123,7 +120,11 @@ public class ScreenChangerService extends StackPane {
     }
 
     void stop() {
-        IController controller = controllers.get(currentScreen);
+        stop(currentScreen);
+    }
+
+    void stop(String name) {
+        IController controller = controllers.get(name);
 
         if (controller instanceof IListener) {
             ((IStopable) controller).stop();
