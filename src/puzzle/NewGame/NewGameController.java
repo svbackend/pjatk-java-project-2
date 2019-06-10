@@ -1,4 +1,4 @@
-package puzzle;
+package puzzle.NewGame;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,13 +19,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Border;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 
 import javafx.util.Duration;
+import puzzle.Game.GameController;
+import puzzle.Game.GameParameterBag;
+import puzzle.Index.IndexController;
+import puzzle.Interfaces.IController;
+import puzzle.Interfaces.IListener;
+import puzzle.Interfaces.IParameterBag;
+import puzzle.ScreenChangerService;
 
 public class NewGameController implements Initializable , IController, IListener {
+    public static final String SCREEN = "NewGame/newGame.fxml";
 
     private ScreenChangerService screenChanger;
 
@@ -58,7 +65,7 @@ public class NewGameController implements Initializable , IController, IListener
             return;
         }
 
-        this.screenChanger.setScreen("game.fxml", new GameParameterBag(userImage, username.getText(), difficulty.getValue()));
+        this.screenChanger.setScreen(GameController.SCREEN, new GameParameterBag(userImage, username.getText(), difficulty.getValue()));
     }
 
     private boolean validate() {
@@ -117,7 +124,7 @@ public class NewGameController implements Initializable , IController, IListener
             return;
         }
 
-        screenChanger.setScreen("index.fxml");
+        screenChanger.setScreen(IndexController.SCREEN);
     }
 
     public void setParameterBag(IParameterBag parameterBag) {

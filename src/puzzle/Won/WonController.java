@@ -1,14 +1,22 @@
-package puzzle;
+package puzzle.Won;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import puzzle.Interfaces.IController;
+import puzzle.Interfaces.IParameterBag;
+import puzzle.NewGame.NewGameController;
+import puzzle.Scoreboard.ScoreboardController;
+import puzzle.ScreenChangerService;
+import puzzle.Game.SpentTime;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class WonController implements Initializable, IController {
+    public static final String SCREEN = "Won/won.fxml";
+
     private ScreenChangerService screenChangerService;
 
     @FXML
@@ -25,12 +33,12 @@ public class WonController implements Initializable, IController {
 
     @FXML
     private void newGame(ActionEvent event){
-       screenChangerService.setScreen("newGame.fxml");
+       screenChangerService.setScreen(NewGameController.SCREEN);
     }
     
     @FXML
     private void showScoreboard(ActionEvent event){
-       screenChangerService.setScreen("scoreboard.fxml");
+       screenChangerService.setScreen(ScoreboardController.SCREEN);
     }
 
     @Override

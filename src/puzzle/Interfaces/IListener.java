@@ -1,4 +1,4 @@
-package puzzle;
+package puzzle.Interfaces;
 
 import javafx.scene.input.KeyEvent;
 

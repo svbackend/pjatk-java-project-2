@@ -1,11 +1,14 @@
-package puzzle;
+package puzzle.Won;
 
-class ResultsParameterBag implements IParameterBag {
+import puzzle.Game.SpentTime;
+import puzzle.Interfaces.IParameterBag;
+
+public class ResultsParameterBag implements IParameterBag {
     private final String username;
     private final String difficulty;
     private final SpentTime spentTime;
 
-    ResultsParameterBag(SpentTime spentTime, String username, String difficulty) {
+    public ResultsParameterBag(SpentTime spentTime, String username, String difficulty) {
         this.spentTime = spentTime;
         this.username = username;
         this.difficulty = difficulty;
@@ -15,11 +18,11 @@ class ResultsParameterBag implements IParameterBag {
         return spentTime;
     }
 
-    String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    String getDifficulty() {
+    public String getDifficulty() {
         return difficulty;
     }
 }

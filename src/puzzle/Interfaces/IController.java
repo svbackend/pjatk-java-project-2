@@ -1,4 +1,6 @@
-package puzzle;
+package puzzle.Interfaces;
+
+import puzzle.ScreenChangerService;
 
 public interface IController {
     void setScreenChanger(ScreenChangerService screenPage);

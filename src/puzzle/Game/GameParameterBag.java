@@ -1,27 +1,29 @@
-package puzzle;
+package puzzle.Game;
+
+import puzzle.Interfaces.IParameterBag;
 
 import java.awt.image.BufferedImage;
 
-class GameParameterBag implements IParameterBag {
+public class GameParameterBag implements IParameterBag {
     private final BufferedImage image;
     private final String username;
     private final String difficulty;
 
-    GameParameterBag(BufferedImage image, String username, String difficulty) {
+    public GameParameterBag(BufferedImage image, String username, String difficulty) {
         this.image = image;
         this.username = username;
         this.difficulty = difficulty;
     }
 
-    BufferedImage getImage() {
+    public BufferedImage getImage() {
         return image;
     }
 
-    String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    String getDifficulty() {
+    public String getDifficulty() {
         return difficulty;
     }
 }

@@ -1,15 +1,15 @@
-package puzzle;
+package puzzle.Game;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-class SpentTime {
+public class SpentTime {
     private Date started;
     private Date ended;
 
     private SimpleDateFormat formatter;
 
-    SpentTime() {
+    public SpentTime() {
         this.formatter = new SimpleDateFormat("mm:ss");
         this.started = new Date(System.currentTimeMillis());
     }

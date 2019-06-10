@@ -14,6 +14,10 @@ import javafx.scene.Parent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import puzzle.Interfaces.IController;
+import puzzle.Interfaces.IListener;
+import puzzle.Interfaces.IParameterBag;
+import puzzle.Interfaces.IStopable;
 
 public class ScreenChangerService extends StackPane {
     private HashMap<String, Node> screens = new HashMap<>();
@@ -48,7 +52,7 @@ public class ScreenChangerService extends StackPane {
         }
     }
 
-    void setScreen(final String fxmlFilename, IParameterBag parameterBag) {
+    public void setScreen(final String fxmlFilename, IParameterBag parameterBag) {
         IController controller = controllers.get(fxmlFilename);
         controller.setParameterBag(parameterBag);
         setScreen(fxmlFilename);
@@ -91,22 +95,6 @@ public class ScreenChangerService extends StackPane {
             System.out.println(fxmlFilename + "screen hasn't been loaded!!! \n");
             return false;
         }
-
-
-        /*Node screenToRemove;
-         if(screens.get(fxmlFilename) != null){   //screen loaded
-         if(!getChildren().isEmpty()){    //if there is more than one screen
-         getChildren().add(0, screens.get(fxmlFilename));     //add the screen
-         screenToRemove = getChildren().get(1);
-         getChildren().remove(1);                    //remove the displayed screen
-         }else{
-         getChildren().add(screens.get(fxmlFilename));       //no one else been displayed, then just show
-         }
-         return true;
-         }else {
-         System.out.println("screen hasn't been loaded!!! \n");
-         return false;
-         }*/
     }
 
     public boolean reloadScreen(String name) {
@@ -115,18 +103,18 @@ public class ScreenChangerService extends StackPane {
         return loadScreen(name);
     }
 
-    EventHandler<KeyEvent> getKeyListener() {
+    public EventHandler<KeyEvent> getKeyListener() {
         return keyListener;
     }
 
-    void stop() {
+    public void stop() {
         stop(currentScreen);
     }
 
-    void stop(String name) {
+    public void stop(String name) {
         IController controller = controllers.get(name);
 
-        if (controller instanceof IListener) {
+        if (controller instanceof IStopable) {
             ((IStopable) controller).stop();
         }
     }

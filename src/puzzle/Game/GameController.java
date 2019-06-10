@@ -1,20 +1,30 @@
-package puzzle;
+package puzzle.Game;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import puzzle.*;
+import puzzle.Interfaces.IController;
+import puzzle.Interfaces.IListener;
+import puzzle.Interfaces.IParameterBag;
+import puzzle.Interfaces.IStopable;
+import puzzle.NewGame.NewGameController;
+import puzzle.Scoreboard.ScoreboardService;
+import puzzle.Won.ResultsParameterBag;
+import puzzle.Won.WonController;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 import java.util.Timer;
 
 public class GameController implements IController, IListener, IStopable {
+    public static final String SCREEN = "Game/game.fxml";
+
     private ScreenChangerService screenChanger;
 
     private final int EASY_ROWS = 2;
@@ -377,13 +387,23 @@ public class GameController implements IController, IListener, IStopable {
         }
 
         if (isPuzzleResolved()) {
-            if (null == screenChanger.getScreen("won.fxml")) {
-                screenChanger.loadScreen("won.fxml");
-            }
-
-            screenChanger.setScreen("won.fxml", new ResultsParameterBag(spentTime, username, difficulty));
-            screenChanger.reloadScreen("game.fxml");
+            onWin();
         }
+    }
+
+    private void onWin() {
+        try {
+            ScoreboardService.addNewScore(username, difficulty, spentTime);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (null == screenChanger.getScreen(WonController.SCREEN)) {
+            screenChanger.loadScreen(WonController.SCREEN);
+        }
+
+        screenChanger.setScreen(WonController.SCREEN, new ResultsParameterBag(spentTime, username, difficulty));
+        screenChanger.reloadScreen(GameController.SCREEN);
     }
 
     public void stop() {
@@ -392,7 +412,7 @@ public class GameController implements IController, IListener, IStopable {
     }
 
     private void goBack() {
-        screenChanger.setScreen("newGame.fxml");
-        screenChanger.reloadScreen("game.fxml");
+        screenChanger.setScreen(NewGameController.SCREEN);
+        screenChanger.reloadScreen(GameController.SCREEN);
     }
 }

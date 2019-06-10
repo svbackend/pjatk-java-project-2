@@ -13,7 +13,7 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <?import java.net.URL?>
-<AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="puzzle.NewGameController">
+<AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="puzzle.NewGame.NewGameController">
     <stylesheets>
         <URL value="@newGame.css" />
     </stylesheets>

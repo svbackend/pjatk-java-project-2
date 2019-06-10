@@ -1,4 +1,4 @@
-package puzzle;
+package puzzle.Interfaces;
 
 public interface IStopable {
     void stop();

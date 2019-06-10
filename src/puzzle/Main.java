@@ -4,6 +4,10 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import puzzle.Game.GameController;
+import puzzle.Index.IndexController;
+import puzzle.NewGame.NewGameController;
+import puzzle.Scoreboard.ScoreboardController;
 
 public class Main extends Application {
 
@@ -12,12 +16,12 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.screenChanger = new ScreenChangerService();
-        this.screenChanger.loadScreen("newGame.fxml");
-        this.screenChanger.loadScreen("scoreboard.fxml");
-        this.screenChanger.loadScreen("game.fxml");
-        this.screenChanger.loadScreen("index.fxml");
+        this.screenChanger.loadScreen(NewGameController.SCREEN);
+        this.screenChanger.loadScreen(ScoreboardController.SCREEN);
+        this.screenChanger.loadScreen(GameController.SCREEN);
+        this.screenChanger.loadScreen(IndexController.SCREEN);
 
-        this.screenChanger.setScreen("index.fxml");
+        this.screenChanger.setScreen(IndexController.SCREEN);
         
         Group root = new Group(this.screenChanger);
         Scene scene = new Scene(root);
