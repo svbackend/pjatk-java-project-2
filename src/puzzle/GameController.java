@@ -377,8 +377,6 @@ public class GameController implements IController, IListener, IStopable {
         }
 
         if (isPuzzleResolved()) {
-            System.out.println("You won!");
-
             if (null == screenChanger.getScreen("won.fxml")) {
                 screenChanger.loadScreen("won.fxml");
             }
