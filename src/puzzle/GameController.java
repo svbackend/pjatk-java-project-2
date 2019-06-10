@@ -15,6 +15,13 @@ import java.util.Timer;
 public class GameController implements IController, IListener, IStopable {
     private ScreenChangerService screenChanger;
 
+    private final int EASY_ROWS = 2;
+    private final int EASY_COLS = 3;
+    private final int MEDIUM_ROWS = 3;
+    private final int MEDIUM_COLS = 3;
+    private final int HARD_ROWS = 4;
+    private final int HARD_COLS = 4;
+
     @FXML
     Label usernameLabel;
     @FXML
@@ -70,21 +77,22 @@ public class GameController implements IController, IListener, IStopable {
     }
 
     private void calcFieldSize() {
+        // todo use enum
         switch (difficulty) {
             default:
             case "Easy":
-                this.cols = 3;
-                this.rows = 2;
+                this.rows = EASY_ROWS;
+                this.cols = EASY_COLS;
                 break;
 
             case "Medium":
-                this.cols = 3;
-                this.rows = 3;
+                this.rows = MEDIUM_ROWS;
+                this.cols = MEDIUM_COLS;
                 break;
 
             case "Hard":
-                this.cols = 4;
-                this.rows = 4;
+                this.rows = HARD_ROWS;
+                this.cols = HARD_COLS;
                 break;
         }
     }
