@@ -12,3 +12,6 @@ JavaFX Puzzle Game
 9. On scoreboard screen read data from file + sort it by time
 
 ![](example.gif)
+
+Video with quick (6 min) overview:
+https://www.youtube.com/watch?v=hKBMxjwNfU8
