@@ -10,3 +10,5 @@ JavaFX Puzzle Game
 7. Add thread to calculate time spent during the game (right after game is started)
 8. After game is ended - save time into file
 9. On scoreboard screen read data from file + sort it by time
+
+![](example.gif)
